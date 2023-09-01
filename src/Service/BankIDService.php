@@ -56,12 +56,9 @@ class BankIDService
     {
         $parameters = [
             'endUserIp'      => $this->endUserIp,
-            'requirement'    => [
-                'allowFingerprint' => true,
-            ],
         ];
         if ($personalNumber) {
-            $parameters['personalNumber'] = $personalNumber;
+            $parameters['requirement']['personalNumber'] = $personalNumber;
         }
 
         $responseData = $this->client->post('auth', ['json' => $parameters]);
@@ -128,5 +125,14 @@ class BankIDService
         $responseCode = $this->client->post('cancel', ['json' => ['orderRef' => $orderRef]])->getStatusCode();
 
         return $responseCode === 200;
+    }
+
+    /**
+     *
+     */
+    public static function generateQrData($qrStartToken, $qrStartSecret, $time) {
+        $qrAuthCode = hash_hmac('sha256', $time, $qrStartSecret);
+
+        return "bankid.$qrStartToken.$time.$qrAuthCode";
     }
 }
