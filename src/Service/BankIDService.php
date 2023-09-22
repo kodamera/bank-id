@@ -48,17 +48,17 @@ class BankIDService
     }
 
     /**
-     * @param string|null $personalNumber The personal number of the user. String. 12 digits. Century must be included.
+     * @param array $requirement Any requirements to be sent in request such as personal number.
      * @return OrderResponse
      * @throws ClientException
      */
-    public function getAuthResponse($personalNumber = null)
+    public function getAuthResponse($requirement = [])
     {
         $parameters = [
             'endUserIp'      => $this->endUserIp,
         ];
-        if ($personalNumber) {
-            $parameters['requirement']['personalNumber'] = $personalNumber;
+        if (!empty($requirement)) {
+            $parameters['requirement'] = $requirement;
         }
 
         $responseData = $this->client->post('auth', ['json' => $parameters]);
