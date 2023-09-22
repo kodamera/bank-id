@@ -49,21 +49,16 @@ class BankIDService
 
     /**
      * @param string|null $personalNumber The personal number of the user. String. 12 digits. Century must be included.
-     * @param string|null $certificatePolicy BankID on file or Mobile.
      * @return OrderResponse
      * @throws ClientException
      */
-    public function getAuthResponse($personalNumber = null, $certificatePolicy = null)
+    public function getAuthResponse($personalNumber = null)
     {
         $parameters = [
             'endUserIp'      => $this->endUserIp,
         ];
         if ($personalNumber) {
             $parameters['requirement']['personalNumber'] = $personalNumber;
-        }
-
-        if ($certificatePolicy) {
-            $parameters['requirement']['certificatePolicies'] = $certificatePolicy;
         }
 
         $responseData = $this->client->post('auth', ['json' => $parameters]);
@@ -133,7 +128,10 @@ class BankIDService
     }
 
     /**
-     *
+     * @param string $qrStartToken The start token.
+     * @param string $qrStartSecret The start secret.
+     * @param string $time The time.
+     * @return string
      */
     public static function generateQrData($qrStartToken, $qrStartSecret, $time) {
         $qrAuthCode = hash_hmac('sha256', $time, $qrStartSecret);
